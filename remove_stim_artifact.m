@@ -75,7 +75,7 @@ if all_art_ixs(end) > length(raw_signal)
 	error('last stimulus artifact outside boundaries, this needs to be solved')
 end
 
-all_artifacts=raw_signal(all_art_ixs);
+all_artifacts=raw_signal(all_art_ixs); clear raw_signal ;
 
 %run over all indices, and create a matrix of all artifacts to extract
 %mean, in vectorized matlab programing
@@ -91,14 +91,14 @@ if do_lin_decay
     decay_vec(n_samp/2+1:end)=linspace(1,0,n_samp/2);
 end
 mean_artifact_decayed=mean_artifact.*decay_vec;
-subtracted_artifacts=all_artifacts-repmat(mean_artifact_decayed,n_stims,1);
+subtracted_artifacts=all_artifacts-repmat(mean_artifact_decayed,n_stims,1); clear all_artifacts
 
 % i_2cut=dead_time*raw_signal_Fs;
 % subtracted_artifacts(:,1:i_2cut)=NaN_0;
 i_2cut=round(dead_time*raw_signal_Fs);
 subtracted_artifacts(:,[i_2cut(1):i_2cut(2)])=NaN_0;
 
-clean_signal(all_art_ixs)=subtracted_artifacts;
+clean_signal(all_art_ixs)=subtracted_artifacts; clear subtracted_artifacts all_art_ixs
 clean_signal=clean_signal(1:org_n_samp);
 
 
