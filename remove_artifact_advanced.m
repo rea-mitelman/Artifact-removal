@@ -1,5 +1,5 @@
 function clean_signal = remove_artifact_advanced...
-    (signal, signal_Fs, stim_times, stim_times_Fs, us_factor, max_itt_jit, ...
+    (signal, signal_Fs, stim_times, stim_times_Fs, us_factor, ...
     art_begin, art_end, max_dead_time_dur, do_lin_decay)
 
 
@@ -22,12 +22,12 @@ stim_times=get_upsamp_times(stim_times,stim_times_Fs,us_factor); %stim_times, th
 jit_ixs=get_temp_jit(signal, stim_times, Fs, jit_dur, us_factor); 
 stim_times=stim_times+jit_ixs/Fs/1000; % Using the jittering indices correction to correct the stimuli times
 % sat_times=sat_times+[min(jit_ixs) max(jit_ixs)+1]*2/Fs; %correct for the jitter, plus margins
-sat_times=sat_times + minmax(jit_ixs')/Fs + [-1 +1]/signal_Fs; %correct for the jitter, plus margins
+sat_times=sat_times + minmax(jit_ixs')/Fs;% + [-1 +1]/Fs; %correct for the jitter, plus margins
 
 sat_times(1) = max(sat_times(1),0); %prevent zeroing before stimulus;
 sat_times(2) = min(sat_times(2),max_dead_time_dur); %zeroing no more than max_dead_time_dur
 fprintf('Saturation time is between %1.2f and %1.2f msec. from stimulus onset\n',sat_times);
-% This probed to be both of little effect in the agarose data, and
+% This proved to be both of little effect in the agarose data, and
 % potentially noise inducing in the physiological data...
 % [resp_mat_us_dejit_denoise, mult_factor]=
 % denoise_multip(resp_mat_us_dejit(t2<sat_times(1) | t2>sat_times(2),:)); %
