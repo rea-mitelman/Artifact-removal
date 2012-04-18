@@ -23,13 +23,17 @@ resp_dur_ixs=round(resp_dur*Fs);
 
 % Pad the signal with NaN from both sides, correct stims accordingly.
 
-if stim
-pad_signal=[
-	NaN(-resp_dur_ixs(1),1);
-	signal;
-	NaN(resp_dur_ixs(2),1)
-	];
-pad_stim_ixs=stim_ixs-resp_dur_ixs(1);
+if stim_ixs(1)-resp_dur_ixs(1)<0 || stim_ixs(end)+resp_dur_ixs(2)>length(signal)
+	pad_signal=[
+		NaN(-resp_dur_ixs(1),1);
+		signal;
+		NaN(resp_dur_ixs(2),1)
+		];
+	pad_stim_ixs=stim_ixs-resp_dur_ixs(1);
+else
+	pad_signal=signal;
+	pad_stim_ixs=stim_ixs;
+end
 
 n_stims=length(stim_ixs);
 
