@@ -1,8 +1,28 @@
 function clean_signal = remove_artifact_advanced...
-    (signal, signal_Fs, stim_times, stim_times_Fs, us_factor, ...
-    art_begin, art_end, max_dead_time_dur, do_lin_decay)
+    (signal, signal_Fs, stim_times, stim_times_Fs, us_factor, art_end, max_dead_time_dur, do_lin_decay)
+% Advanced method for stimulus artifact removal
+% Artifact removal algorithm:
+% 1. Detection of saturated times: the post stimuli time samples, in which
+%    the signal is saturated are detected. The saturation times are
+%    searched at the segment t=sat_dur(1):sat_dur(2) =0:1 ms.
+%    (get_sat_times).     
+% 2. The signal is up-sampled (my_upsamp), us_factor times.
+% 3. The jitter in the stimulus times is corrected, using segments of
+%    t=jit_dur(1):jit_dur(2)=0:1 ms. (Boris’ paper, get_temp_jit)
+% 4. The artifacts are removed in the following manner: the dead time
+%    (starting the minimal time of saturation and ending at the maximal time
+%    of saturation with respect to the stimulus time) is set to zero. For the
+%    rest of the segment, lasting art_time, the average response is
+%    subtracted. If do_lin_decay==true, a similar length segment, after the
+%    first one is subtracted in a linearly decay manner.
+%    (remove_stim_artifact)  
+% 5. The signal is downsampled to the original sampling rate (my_decimate)
+% 
+% 
 
 
+
+art_begin=0;
 resp_dur=[art_begin art_end];
 sat_dur=[0 1]; %The period duration in which satturation is looked for
 jit_dur=[0 1]; %The period duration in which jitter is looked for
@@ -22,7 +42,7 @@ stim_times=get_upsamp_times(stim_times,stim_times_Fs,us_factor); %stim_times, th
 jit_ixs=get_temp_jit(signal, stim_times, Fs, jit_dur, us_factor); 
 stim_times=stim_times+jit_ixs/Fs/1000; % Using the jittering indices correction to correct the stimuli times
 % sat_times=sat_times+[min(jit_ixs) max(jit_ixs)+1]*2/Fs; %correct for the jitter, plus margins
-sat_times=sat_times + minmax(jit_ixs')/Fs;% + [-1 +1]/Fs; %correct for the jitter, plus margins
+sat_times=sat_times + minmax(jit_ixs')/signal_Fs;% + [-1 +1]/Fs; %correct for the jitter, plus margins
 
 sat_times(1) = max(sat_times(1),0); %prevent zeroing before stimulus;
 sat_times(2) = min(sat_times(2),max_dead_time_dur); %zeroing no more than max_dead_time_dur

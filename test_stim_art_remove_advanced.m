@@ -37,7 +37,7 @@ for ff=files
 
         signal=eval(['Unit' num2str(elec)]);clear (['Unit' num2str(elec)]);
         Fs=eval(['Unit' num2str(elec) '_KHz']);
-        signal_clean=remove_artifact_advanced(signal, Fs, stim_times, stim_times_Fs, upsamp_factor, art_begin, art_end, max_dead_time_dur, do_lin_decay);
+        signal_clean=remove_artifact_advanced(signal, Fs, stim_times, stim_times_Fs, upsamp_factor, art_end, max_dead_time_dur, do_lin_decay);
         close all
         %             t=[0:length(signal_clean)-1]/Fs;
         %             plot(stim_times*1e3*[1 1],[-5 5],'-r',t,signal_clean,'-');

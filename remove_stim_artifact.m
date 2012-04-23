@@ -51,7 +51,12 @@ if ~exist('org_art_dur','var') || isempty (org_art_dur)
 	org_art_dur=3;
 	fprintf('Using artifact duration of %1.0f (plus an identical time for decay)\n',org_art_dur);
 end
-art_dur=2*org_art_dur;%the 2nd half is used for the decay
+
+if do_lin_decay
+    art_dur=2*org_art_dur;%the 2nd half is used for the decay
+else
+    art_dur=org_art_dur;
+end
 
 if ~unempty_exist('dead_time')
     dead_time=1;
@@ -95,7 +100,7 @@ subtracted_artifacts=all_artifacts-repmat(mean_artifact_decayed,n_stims,1); clea
 
 % i_2cut=dead_time*raw_signal_Fs;
 % subtracted_artifacts(:,1:i_2cut)=NaN_0;
-i_2cut=round(dead_time*raw_signal_Fs);
+i_2cut=round(dead_time*raw_signal_Fs)+1;
 subtracted_artifacts(:,[i_2cut(1):i_2cut(2)])=NaN_0;
 
 clean_signal(all_art_ixs)=subtracted_artifacts; clear subtracted_artifacts all_art_ixs
