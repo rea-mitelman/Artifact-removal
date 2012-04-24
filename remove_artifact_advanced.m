@@ -1,5 +1,6 @@
 function clean_signal = remove_artifact_advanced...
-    (signal, signal_Fs, stim_times, stim_times_Fs, us_factor, art_end, max_dead_time_dur, do_lin_decay)
+    (signal, signal_Fs, stim_times, stim_times_Fs,...
+	us_factor, art_end, max_dead_time_dur, do_lin_decay)
 % Advanced method for stimulus artifact removal
 % Artifact removal algorithm:
 % 1. Detection of saturated times: the post stimuli time samples, in which
@@ -19,9 +20,27 @@ function clean_signal = remove_artifact_advanced...
 % 5. The signal is downsampled to the original sampling rate (my_decimate)
 % 
 % 
+if ~exist('us_factor','var') || isempty(us_factor)
+	us_factor=8;
+	disp('Using defauly us_factor=8')
+end
 
+if ~exist('art_end','var') || isempty(art_end)
+	art_end=15;
+	disp('Using defauly art_end=15')
+end
 
+if ~exist('max_dead_time_dur','var') || isempty(max_dead_time_dur)
+	max_dead_time_dur=0.75;
+	disp('Using defauly max_dead_time_dur=0.75')
+end
 
+if ~exist('do_lin_decay','var') || isempty(do_lin_decay)
+	do_lin_decay=false;
+	disp('Using defauly do_lin_decay=false')
+end
+
+	
 art_begin=0;
 resp_dur=[art_begin art_end];
 sat_dur=[0 1]; %The period duration in which satturation is looked for
