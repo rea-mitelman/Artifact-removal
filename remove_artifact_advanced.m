@@ -20,6 +20,14 @@ function clean_signal = remove_artifact_advanced...
 % 5. The signal is downsampled to the original sampling rate (my_decimate)
 % 
 % 
+
+if isempty(stim_times)
+	disp('No stimuli were removed');
+	clean_signal=signal;
+	return
+end
+
+
 if ~exist('us_factor','var') || isempty(us_factor)
 	us_factor=8;
 	disp('Using defauly us_factor=8')
