@@ -25,6 +25,10 @@ if isempty(stim_times)
 	disp('No stimuli were removed');
 	clean_signal=signal;
 	return
+elseif length(stim_times)==1
+	disp('Only one stimulus found, signal returned as-is')
+	clean_signal=signal;
+	return
 end
 
 
